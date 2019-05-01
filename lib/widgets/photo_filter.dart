@@ -273,10 +273,17 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                         ),
                       ),
                     )
-                  : Image.memory(
-                      snapshot.data,
-                      fit: BoxFit.contain,
-                    );
+                  :
+              ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Image.memory(
+                        snapshot.data,
+                        fit: BoxFit.cover,
+                      )
+                  )
+              );
           }
           return null; // unreachable
         },
@@ -295,15 +302,22 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                 ),
               ),
             )
-          : Image.memory(
-              cachedFilters[filter?.name ?? "_"],
-              fit: widget.fit,
-            );
+          :
+      ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          child: AspectRatio(
+              aspectRatio: 1,
+              child: Image.memory(
+                cachedFilters[filter?.name ?? "_"],
+                fit: BoxFit.cover,
+              )
+          )
+      );
     }
   }
 }
 
-///The global applyfilter function
+///The global applyFilter function
 List<int> applyFilter(Map<String, dynamic> params) {
   Filter filter = params["filter"];
   imageLib.Image image = params["image"];

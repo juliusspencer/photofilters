@@ -4,6 +4,7 @@ import 'package:image/image.dart';
 import 'package:test/test.dart';
 
 import 'package:photofilters/photofilters.dart';
+import 'package:photofilters/filters/preset_filters.dart';
 
 void applyFilter(Filter filter, String src, String dest) {
   Image image = decodeImage(File(src).readAsBytesSync());
@@ -15,7 +16,7 @@ void applyFilter(Filter filter, String src, String dest) {
 
 void main() {
   test("test All", () {
-    for (var filter in presetFitersList) {
+    for (var filter in presetFiltersList) {
       print('Applying ${filter.name}');
       applyFilter(filter, 'test/res/bird.jpg', 'test/out/${filter.name}.jpg');
     }
