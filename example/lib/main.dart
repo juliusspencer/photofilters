@@ -32,7 +32,6 @@ class _MyAppState extends State<MyApp> {
               image: image,
               filters: presetFiltersList,
               filename: fileName,
-              loader: Center(child: CircularProgressIndicator()),
               fit: BoxFit.contain,
             ),
       ),

@@ -1,23 +1,24 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:photofilters/filters/filters.dart';
 import 'package:image/image.dart' as imageLib;
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class PhotoFilter extends StatelessWidget {
   final imageLib.Image image;
   final String filename;
   final Filter filter;
   final BoxFit fit;
-  final Widget loader;
+  final Widget loader = Center(child: PlatformCircularProgressIndicator());
   PhotoFilter({
     @required this.image,
     @required this.filename,
     @required this.filter,
     this.fit = BoxFit.fill,
-    this.loader = const Center(child: CircularProgressIndicator()),
   });
 
   @override
@@ -55,7 +56,6 @@ class PhotoFilterSelector extends StatefulWidget {
 
   final List<Filter> filters;
   final imageLib.Image image;
-  final Widget loader;
   final BoxFit fit;
   final String filename;
   final bool circleShape;
@@ -65,7 +65,6 @@ class PhotoFilterSelector extends StatefulWidget {
     @required this.title,
     @required this.filters,
     @required this.image,
-    this.loader = const Center(child: CircularProgressIndicator()),
     this.fit = BoxFit.fill,
     @required this.filename,
     this.circleShape = false,
@@ -99,14 +98,15 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
         title: widget.title,
-        actions: <Widget>[
+        trailingActions: <Widget>[
           loading
               ? Container()
-              : IconButton(
-                  icon: Icon(Icons.check),
+              : PlatformIconButton(
+                  androidIcon: Icon(Icons.check),
+                  iosIcon: Icon(CupertinoIcons.check_mark, size: 48),
                   onPressed: () async {
                     setState(() {
                       loading = true;
@@ -118,61 +118,63 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
                 )
         ],
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: loading
-            ? widget.loader
-            : Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    flex: 6,
-                    child: Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      padding: EdgeInsets.all(12.0),
-                      child: _buildFilteredImage(
-                        _filter,
-                        image,
-                        filename,
+      body: SafeArea(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: loading
+              ? Center(child: PlatformCircularProgressIndicator())
+              : Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      flex: 6,
+                      child: Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        padding: EdgeInsets.all(12.0),
+                        child: _buildFilteredImage(
+                          _filter,
+                          image,
+                          filename,
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: widget.filters.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return InkWell(
-                            child: Container(
-                              padding: EdgeInsets.all(5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  _buildFilterThumbnail(
-                                      widget.filters[index], image, filename),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  Text(
-                                    widget.filters[index].name,
-                                  )
-                                ],
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: widget.filters.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              child: Container(
+                                padding: EdgeInsets.all(5.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    _buildFilterThumbnail(
+                                        widget.filters[index], image, filename),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Text(
+                                      widget.filters[index].name,
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                            onTap: () => setState(() {
-                                  _filter = widget.filters[index];
-                                }),
-                          );
-                        },
+                              onTap: () => setState(() {
+                                    _filter = widget.filters[index];
+                                  }),
+                            );
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
       ),
     );
   }
@@ -193,7 +195,7 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
               return CircleAvatar(
                 radius: 50.0,
                 child: Center(
-                  child: widget.loader,
+                  child: Center(child: PlatformCircularProgressIndicator()),
                 ),
                 backgroundColor: Colors.white,
               );
@@ -252,10 +254,10 @@ class _PhotoFilterSelectorState extends State<PhotoFilterSelector> {
         builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
-              return widget.loader;
+              return Center(child: PlatformCircularProgressIndicator());
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return widget.loader;
+              return Center(child: PlatformCircularProgressIndicator());
             case ConnectionState.done:
               if (snapshot.hasError)
                 return Center(child: Text('Error: ${snapshot.error}'));
