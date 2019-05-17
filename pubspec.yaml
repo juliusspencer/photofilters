@@ -5,7 +5,7 @@ author: Sharafudheen KK <skkallayath@gmail.com>
 homepage: https://github.com/skkallayath/photofilters
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
